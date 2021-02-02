@@ -127,7 +127,7 @@ def last_n_days():
 
 	if show_plot_deceased_cases:
 		fig = plot_last_n_days(deceased_cases, "Deceased cases", "deceased", "b")
-		plt.show()
+		fig.show()
 		st.pyplot()
 
 	if show_plot_change_confirmed_cases:
@@ -142,7 +142,7 @@ def last_n_days():
 
 	if show_plot_change_deceased_cases:
 		fig = plot_last_n_days(np.diff(deceased_cases), "Daily Change Deceased cases", "daily change deceased", "b")
-		plt.show()
+		fig.show()
 		st.pyplot()
 
 
