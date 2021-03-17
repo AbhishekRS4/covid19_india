@@ -5,7 +5,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 
 
-def plot_last_n_days(data, title, label, color):
+def get_plot_last_n_days(data, title, label, color):
 	fig, axes = plt.subplots(1, 1, figsize=(8, 8))
 	axes.set_title(title)
 	axes.bar(np.arange(len(data)), data, label=label, color=color)
@@ -15,7 +15,7 @@ def plot_last_n_days(data, title, label, color):
 	return fig
 
 
-def plot_all_states(data, states, latest_date=None):
+def get_plot_all_states(data, states, latest_date=None):
 	width = 0.3
 	x_label_indices = np.arange(len(states))
 
@@ -45,7 +45,6 @@ def latest_date():
 	st.title("Covid-19 latest cases dashboard")
 	df_daily = pd.read_csv(csv_weblinks["statewise_daily"])
 
-	all_states = df_daily.columns[2:]
 	df_latest_data = df_daily.tail(3)
 	latest_date = df_latest_data.to_numpy()[-1, 0]
 
@@ -53,10 +52,13 @@ def latest_date():
 	st.write(df_latest_data)
 
 	show_plot_latest_cases = st.sidebar.checkbox("Show plot latest cases")
-	latest_data = df_latest_data.to_numpy()[:, 2:]
 
 	if show_plot_latest_cases:
-		fig = plot_all_states(latest_data, all_states, latest_date)
+		start_column = 3
+		all_states = df_daily.columns[start_column:]
+		latest_data = df_latest_data.to_numpy()[:, start_column:]
+
+		fig = get_plot_all_states(latest_data, all_states, latest_date)
 		fig.show()
 		st.pyplot()
 
@@ -75,7 +77,7 @@ def total():
 		all_states = df_total.State_code.to_numpy()[1:]
 		all_data = df_total.to_numpy()[1:, 2:5].T
 
-		fig = plot_all_states(all_data, all_states)
+		fig = get_plot_all_states(all_data, all_states)
 		fig.show()
 		st.pyplot()
 
@@ -116,32 +118,32 @@ def last_n_days():
 	show_plot_change_deceased_cases = st.sidebar.checkbox("Show plot change deceased cases")
 
 	if show_plot_confirmed_cases:
-		fig = plot_last_n_days(confirmed_cases, "Confirmed cases", "confirmed", "r")
+		fig = get_plot_last_n_days(confirmed_cases, "Confirmed cases", "confirmed", "r")
 		fig.show()
 		st.pyplot()
 
 	if show_plot_recovered_cases:
-		fig = plot_last_n_days(recovered_cases, "Recovered cases", "recovered", "g")
+		fig = get_plot_last_n_days(recovered_cases, "Recovered cases", "recovered", "g")
 		fig.show()
 		st.pyplot()
 
 	if show_plot_deceased_cases:
-		fig = plot_last_n_days(deceased_cases, "Deceased cases", "deceased", "b")
+		fig = get_plot_last_n_days(deceased_cases, "Deceased cases", "deceased", "b")
 		fig.show()
 		st.pyplot()
 
 	if show_plot_change_confirmed_cases:
-		fig = plot_last_n_days(np.diff(confirmed_cases), "Daily Change Confirmed cases", "daily change confirmed", "r")
+		fig = get_plot_last_n_days(np.diff(confirmed_cases), "Daily Change Confirmed cases", "daily change confirmed", "r")
 		fig.show()
 		st.pyplot()
 
 	if show_plot_change_recovered_cases:
-		fig = plot_last_n_days(np.diff(recovered_cases), "Daily Change Recovered cases", "daily change recovered", "g")
+		fig = get_plot_last_n_days(np.diff(recovered_cases), "Daily Change Recovered cases", "daily change recovered", "g")
 		fig.show()
 		st.pyplot()
 
 	if show_plot_change_deceased_cases:
-		fig = plot_last_n_days(np.diff(deceased_cases), "Daily Change Deceased cases", "daily change deceased", "b")
+		fig = get_plot_last_n_days(np.diff(deceased_cases), "Daily Change Deceased cases", "daily change deceased", "b")
 		fig.show()
 		st.pyplot()
 
