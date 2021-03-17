@@ -50,6 +50,8 @@ def latest_date():
 
 	st.write(f"Latest data available from date : {latest_date}")
 	st.write(df_latest_data)
+	link_statewise_daily = "[Download statewise daily covid-19 caseload csv data]("+csv_weblinks["statewise_daily"]+")"
+	st.markdown(link_statewise_daily, unsafe_allow_html=True)
 
 	show_plot_latest_cases = st.sidebar.checkbox("Show plot latest cases")
 
@@ -71,6 +73,8 @@ def total():
 	df_total["Mortality_Rate"] = np.around(100 * df_total.Deaths.to_numpy() / df_total.Confirmed.to_numpy(), 2)
 
 	st.write(df_total)
+	link_statewise_total = "[Download statewise total covid-19 caseload csv data]("+csv_weblinks["statewise_total"]+")"
+	st.markdown(link_statewise_total, unsafe_allow_html=True)
 
 	show_plot_total_cases = st.sidebar.checkbox("Show plot total cases")
 	if show_plot_total_cases:
