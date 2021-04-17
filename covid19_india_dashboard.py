@@ -114,12 +114,16 @@ def infection_last_n_days():
 	recovered_cases = df_last_n_days[selected_state_code].to_numpy()[1::3]
 	deceased_cases = df_last_n_days[selected_state_code].to_numpy()[2::3]
 
+	show_percentage_change = st.sidebar.checkbox("Show percentage change", True)
 	show_plot_confirmed_cases = st.sidebar.checkbox("Show plot confirmed cases", True)
 	show_plot_recovered_cases = st.sidebar.checkbox("Show plot recovered cases", True)
 	show_plot_deceased_cases = st.sidebar.checkbox("Show plot deceased cases", True)
-	show_plot_change_confirmed_cases = st.sidebar.checkbox("Show plot change confirmed cases")
-	show_plot_change_recovered_cases = st.sidebar.checkbox("Show plot change recovered cases")
-	show_plot_change_deceased_cases = st.sidebar.checkbox("Show plot change deceased cases")
+
+	if show_percentage_change:
+		percentage_change_confirmed_cases = 100 * (confirmed_cases[-1] - confirmed_cases[0]) / confirmed_cases[0]
+		percentage_change_deceased_cases = 100 * (deceased_cases[-1] - deceased_cases[0]) / deceased_cases[0]
+		st.write(f"Change in confirmed cases in last {selected_n_days} days : {percentage_change_confirmed_cases:.02f} %")
+		st.write(f"Change in deceased cases in last {selected_n_days} days : {percentage_change_deceased_cases:.02f} %")
 
 	if show_plot_confirmed_cases:
 		fig = get_plot_last_n_days(confirmed_cases, "Confirmed cases", "confirmed", "b")
@@ -133,21 +137,6 @@ def infection_last_n_days():
 
 	if show_plot_deceased_cases:
 		fig = get_plot_last_n_days(deceased_cases, "Deceased cases", "deceased", "r")
-		fig.show()
-		st.pyplot()
-
-	if show_plot_change_confirmed_cases:
-		fig = get_plot_last_n_days(np.diff(confirmed_cases), "Daily Change Confirmed cases", "daily change confirmed", "b")
-		fig.show()
-		st.pyplot()
-
-	if show_plot_change_recovered_cases:
-		fig = get_plot_last_n_days(np.diff(recovered_cases), "Daily Change Recovered cases", "daily change recovered", "g")
-		fig.show()
-		st.pyplot()
-
-	if show_plot_change_deceased_cases:
-		fig = get_plot_last_n_days(np.diff(deceased_cases), "Daily Change Deceased cases", "daily change deceased", "r")
 		fig.show()
 		st.pyplot()
 
