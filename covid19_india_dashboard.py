@@ -26,7 +26,7 @@ def get_plot_all_states(data, states, latest_date=None):
 		plt.suptitle(f"Statewise covid-19 data")
 
 	axes[0].set_title("Confirmed vs Recovered cases")
-	axes[0].bar(x_label_indices - (width/2), data[-3, :], width, label="confirmed", color="r")
+	axes[0].bar(x_label_indices - (width/2), data[-3, :], width, label="confirmed", color="b")
 	axes[0].bar(x_label_indices + (width/2), data[-2, :], width, label="recovered", color="g")
 	axes[0].set_xticks(x_label_indices)
 	axes[0].set_xticklabels(tuple(states))
@@ -34,14 +34,14 @@ def get_plot_all_states(data, states, latest_date=None):
 	axes[0].grid()
 
 	axes[1].set_title("Deceased cases")
-	axes[1].bar(states, data[-1, :], label="deceased", color="b")
+	axes[1].bar(states, data[-1, :], label="deceased", color="r")
 	axes[1].legend()
 	axes[1].grid()
 
 	return fig
 
 
-def latest_date():
+def infection_latest_date():
 	st.title("Covid-19 latest cases dashboard")
 	df_daily = pd.read_csv(csv_weblinks["statewise_daily"])
 
@@ -53,7 +53,7 @@ def latest_date():
 	link_statewise_daily = "[Download statewise daily covid-19 caseload csv data]("+csv_weblinks["statewise_daily"]+")"
 	st.markdown(link_statewise_daily, unsafe_allow_html=True)
 
-	show_plot_latest_cases = st.sidebar.checkbox("Show plot latest cases")
+	show_plot_latest_cases = st.sidebar.checkbox("Show plot latest cases", True)
 
 	if show_plot_latest_cases:
 		start_column = 3
@@ -65,7 +65,7 @@ def latest_date():
 		st.pyplot()
 
 
-def total():
+def infection_total():
 	st.title("Covid-19 total cases dashboard")
 	df_total = pd.read_csv(csv_weblinks["statewise_total"])
 
@@ -76,7 +76,7 @@ def total():
 	link_statewise_total = "[Download statewise total covid-19 caseload csv data]("+csv_weblinks["statewise_total"]+")"
 	st.markdown(link_statewise_total, unsafe_allow_html=True)
 
-	show_plot_total_cases = st.sidebar.checkbox("Show plot total cases")
+	show_plot_total_cases = st.sidebar.checkbox("Show plot total cases", True)
 	if show_plot_total_cases:
 		all_states = df_total.State_code.to_numpy()[1:]
 		all_data = df_total.to_numpy()[1:, 2:5].T
@@ -86,7 +86,7 @@ def total():
 		st.pyplot()
 
 
-def last_n_days():
+def infection_last_n_days():
 	df_total = pd.read_csv(csv_weblinks["statewise_total"])
 	df_daily = pd.read_csv(csv_weblinks["statewise_daily"])
 
@@ -115,14 +115,14 @@ def last_n_days():
 	deceased_cases = df_last_n_days[selected_state_code].to_numpy()[2::3]
 
 	show_plot_confirmed_cases = st.sidebar.checkbox("Show plot confirmed cases", True)
-	show_plot_recovered_cases = st.sidebar.checkbox("Show plot recovered cases")
-	show_plot_deceased_cases = st.sidebar.checkbox("Show plot deceased cases")
+	show_plot_recovered_cases = st.sidebar.checkbox("Show plot recovered cases", True)
+	show_plot_deceased_cases = st.sidebar.checkbox("Show plot deceased cases", True)
 	show_plot_change_confirmed_cases = st.sidebar.checkbox("Show plot change confirmed cases")
 	show_plot_change_recovered_cases = st.sidebar.checkbox("Show plot change recovered cases")
 	show_plot_change_deceased_cases = st.sidebar.checkbox("Show plot change deceased cases")
 
 	if show_plot_confirmed_cases:
-		fig = get_plot_last_n_days(confirmed_cases, "Confirmed cases", "confirmed", "r")
+		fig = get_plot_last_n_days(confirmed_cases, "Confirmed cases", "confirmed", "b")
 		fig.show()
 		st.pyplot()
 
@@ -132,12 +132,12 @@ def last_n_days():
 		st.pyplot()
 
 	if show_plot_deceased_cases:
-		fig = get_plot_last_n_days(deceased_cases, "Deceased cases", "deceased", "b")
+		fig = get_plot_last_n_days(deceased_cases, "Deceased cases", "deceased", "r")
 		fig.show()
 		st.pyplot()
 
 	if show_plot_change_confirmed_cases:
-		fig = get_plot_last_n_days(np.diff(confirmed_cases), "Daily Change Confirmed cases", "daily change confirmed", "r")
+		fig = get_plot_last_n_days(np.diff(confirmed_cases), "Daily Change Confirmed cases", "daily change confirmed", "b")
 		fig.show()
 		st.pyplot()
 
@@ -147,15 +147,15 @@ def last_n_days():
 		st.pyplot()
 
 	if show_plot_change_deceased_cases:
-		fig = get_plot_last_n_days(np.diff(deceased_cases), "Daily Change Deceased cases", "daily change deceased", "b")
+		fig = get_plot_last_n_days(np.diff(deceased_cases), "Daily Change Deceased cases", "daily change deceased", "r")
 		fig.show()
 		st.pyplot()
 
 
 modes = {
-	"total" : total,
-	"latest_date" : latest_date,
-	"last_n_days" : last_n_days
+	"infection_total" : infection_total,
+	"infection_latest_date" : infection_latest_date,
+	"infection_last_n_days" : infection_last_n_days
 }
 
 
