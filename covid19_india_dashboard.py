@@ -41,9 +41,15 @@ def get_plot_all_states(data, states, latest_date=None):
 	return fig
 
 
+def get_dataframe_read_csv(csv_file):
+	df_csv = pd.read_csv(csv_file)
+
+	return df_csv
+
+
 def infection_latest_date():
 	st.title("Covid-19 latest cases dashboard")
-	df_daily = pd.read_csv(csv_weblinks["statewise_daily"])
+	df_daily = get_dataframe_read_csv(csv_weblinks["statewise_daily"])
 
 	df_latest_data = df_daily.tail(3)
 	latest_date = df_latest_data.to_numpy()[-1, 0]
@@ -67,7 +73,7 @@ def infection_latest_date():
 
 def infection_total():
 	st.title("Covid-19 total cases dashboard")
-	df_total = pd.read_csv(csv_weblinks["statewise_total"])
+	df_total = get_dataframe_read_csv(csv_weblinks["statewise_total"])
 
 	df_total = df_total[["State", "State_code", "Confirmed", "Recovered", "Deaths", "Active"]]
 	df_total["Mortality_Rate"] = np.around(100 * df_total.Deaths.to_numpy() / df_total.Confirmed.to_numpy(), 2)
@@ -87,8 +93,8 @@ def infection_total():
 
 
 def infection_last_n_days():
-	df_total = pd.read_csv(csv_weblinks["statewise_total"])
-	df_daily = pd.read_csv(csv_weblinks["statewise_daily"])
+	df_total = get_dataframe_read_csv(csv_weblinks["statewise_total"])
+	df_daily = get_dataframe_read_csv(csv_weblinks["statewise_daily"])
 
 	states_list = list(df_total.State.to_numpy())
 	states_code = list(df_total.State_code.to_numpy())
@@ -144,13 +150,13 @@ def infection_last_n_days():
 modes = {
 	"infection_total" : infection_total,
 	"infection_latest_date" : infection_latest_date,
-	"infection_last_n_days" : infection_last_n_days
+	"infection_last_n_days" : infection_last_n_days,
 }
 
 
 csv_weblinks = {
 	"statewise_daily" : "https://api.covid19india.org/csv/latest/state_wise_daily.csv",
-	"statewise_total" : "https://api.covid19india.org/csv/latest/state_wise.csv"
+	"statewise_total" : "https://api.covid19india.org/csv/latest/state_wise.csv",
 }
 
 
