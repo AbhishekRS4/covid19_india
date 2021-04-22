@@ -204,14 +204,14 @@ def vaccine_doses_total():
 	df_vaccine_doses = get_dataframe_read_csv(csv_weblinks["vaccine_doses_daily"])
 	df_vaccine_doses = preprocess_vaccine_doses_df(df_vaccine_doses)
 	dates_list = df_vaccine_doses["Date"].values
-	st.title(f"Statewise total vaccine doses administered daily from {dates_list[0]} to {dates_list[-1]}")
+	st.title(f"Statewise distribution of total vaccine doses administered")
 	show_percent = st.sidebar.checkbox("Show percentage", True)
 
 	all_states = df_vaccine_doses.columns[1:].values
 	vaccine_doses_all_states_array = df_vaccine_doses.iloc[-1].values[1:].astype(np.int32)
 
 	fig = get_pie_chart_multi_categories(vaccine_doses_all_states_array[:-1], all_states[:-1], \
-		"Total vaccine doses administered by states", show_percent)
+		"Distribution of total vaccine doses administered by states", show_percent)
 	fig.show()
 	st.pyplot()
 
