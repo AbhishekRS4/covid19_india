@@ -86,9 +86,9 @@ def get_dataframe_read_csv(csv_file, usecols=None):
 
 def infection_latest_date():
 	st.title("Covid-19 latest cases dashboard")
-	df_daily = get_dataframe_read_csv(csv_weblinks["statewise_daily"])
+	df_infection_state_daily = get_dataframe_read_csv(csv_weblinks["statewise_daily"])
 
-	df_latest_data = df_daily.tail(3)
+	df_latest_data = df_infection_state_daily.tail(3)
 	latest_date = df_latest_data.to_numpy()[-1, 0]
 
 	st.write(f"Latest data available from date : {latest_date}")
@@ -100,41 +100,41 @@ def infection_latest_date():
 
 	if show_plot_latest_cases:
 		start_column = 3
-		all_states = df_daily.columns[start_column:]
+		states_list = df_infection_state_daily.columns[start_column:]
 		latest_data = df_latest_data.to_numpy()[:, start_column:]
 
-		fig = get_bar_chart_multi(latest_data, all_states, latest_date)
+		fig = get_bar_chart_multi(latest_data, states_list, latest_date)
 		fig.show()
 		st.pyplot()
 
 
 def infection_total():
 	st.title("Covid-19 total cases dashboard")
-	df_total = get_dataframe_read_csv(csv_weblinks["statewise_total"])
+	df_infection_state_total = get_dataframe_read_csv(csv_weblinks["statewise_total"])
 
-	df_total = df_total[["State", "State_code", "Confirmed", "Recovered", "Deaths", "Active"]]
-	df_total["Mortality_Rate"] = np.around(100 * df_total.Deaths.to_numpy() / df_total.Confirmed.to_numpy(), 2)
+	df_infection_state_total = df_infection_state_total[["State", "State_code", "Confirmed", "Recovered", "Deaths", "Active"]]
+	df_infection_state_total["Mortality_Rate"] = np.around(100 * df_infection_state_total.Deaths.to_numpy() / df_infection_state_total.Confirmed.to_numpy(), 2)
 
-	st.write(df_total)
+	st.write(df_infection_state_total)
 	link_statewise_total = "[Download statewise total covid-19 caseload csv data]("+csv_weblinks["statewise_total"]+")"
 	st.markdown(link_statewise_total, unsafe_allow_html=True)
 
 	show_plot_total_cases = st.sidebar.checkbox("Show plot total cases", True)
 	if show_plot_total_cases:
-		all_states = df_total.State_code.to_numpy()[1:]
-		all_data = df_total.to_numpy()[1:, 2:5].T
+		states_list = df_infection_state_total.State_code.to_numpy()[1:]
+		all_data = df_infection_state_total.to_numpy()[1:, 2:5].T
 
-		fig = get_bar_chart_multi(all_data, all_states)
+		fig = get_bar_chart_multi(all_data, states_list)
 		fig.show()
 		st.pyplot()
 
 
 def infection_last_n_days():
-	df_total = get_dataframe_read_csv(csv_weblinks["statewise_total"])
-	df_daily = get_dataframe_read_csv(csv_weblinks["statewise_daily"])
+	df_infection_state_total = get_dataframe_read_csv(csv_weblinks["statewise_total"])
+	df_infection_state_daily = get_dataframe_read_csv(csv_weblinks["statewise_daily"])
 
-	states_list = list(df_total.State.to_numpy())
-	states_code = list(df_total.State_code.to_numpy())
+	states_list = list(df_infection_state_total.State.to_numpy())
+	states_code = list(df_infection_state_total.State_code.to_numpy())
 
 	states_mapping_dict = dict()
 
@@ -142,13 +142,13 @@ def infection_last_n_days():
 		states_mapping_dict[states_list[i]] = states_code[i]
 
 	min_n_days = 7
-	max_n_days = df_daily.shape[0] // 3
+	max_n_days = df_infection_state_daily.shape[0] // 3
 	selected_n_days = st.sidebar.number_input(f"Last N days ({min_n_days}-{max_n_days})", \
 		min_value=min_n_days, max_value=max_n_days, value=60)
 	selected_state = st.sidebar.selectbox("State / Region", list(states_list))
 	selected_state_code = states_mapping_dict[selected_state]
 
-	df_last_n_days = df_daily.tail(3 * selected_n_days)
+	df_last_n_days = df_infection_state_daily.tail(3 * selected_n_days)
 	start_date, end_date = df_last_n_days.Date.to_numpy()[0], df_last_n_days.Date.to_numpy()[-1]
 
 	st.title(f"Last {selected_n_days} days for {selected_state} ({selected_state_code}) from {start_date} to {end_date}")
@@ -169,17 +169,17 @@ def infection_last_n_days():
 		st.write(f"Change in deceased cases in last {selected_n_days} days : {percentage_change_deceased_cases:.02f} %")
 
 	if show_plot_confirmed_cases:
-		fig = get_bar_chart_single(confirmed_cases, "Confirmed cases", "confirmed", "b")
+		fig = get_bar_chart_single(confirmed_cases, f"Confirmed cases in {selected_state} for last {selected_n_days} days", "confirmed", "b")
 		fig.show()
 		st.pyplot()
 
 	if show_plot_recovered_cases:
-		fig = get_bar_chart_single(recovered_cases, "Recovered cases", "recovered", "g")
+		fig = get_bar_chart_single(recovered_cases, f"Recovered cases in {selected_state} for last {selected_n_days} days", "recovered", "g")
 		fig.show()
 		st.pyplot()
 
 	if show_plot_deceased_cases:
-		fig = get_bar_chart_single(deceased_cases, "Deceased cases", "deceased", "r")
+		fig = get_bar_chart_single(deceased_cases, f"Deceased cases in {selected_state} for last {selected_n_days} days", "deceased", "r")
 		fig.show()
 		st.pyplot()
 
@@ -189,8 +189,8 @@ def infection_rate():
 		usecols=["Date", "State", "Confirmed", "Deceased", "Tested"])
 	df_positivity = df_positivity.dropna()
 
-	all_states = np.unique(df_positivity["State"].values)
-	selected_state = st.sidebar.selectbox("State / region", all_states, 13)
+	states_list = np.unique(df_positivity["State"].values)
+	selected_state = st.sidebar.selectbox("State / region", states_list, 13)
 	st.title("Infection rate")
 	st.header(f"Selected state / region : {selected_state}")
 
@@ -211,10 +211,10 @@ def infection_rate():
 
 	min_n_days = 7
 	max_n_days = len(rate_positivity)
-	last_n_days_selected = st.sidebar.number_input(f"Last N days ({min_n_days}-{max_n_days})",\
+	selected_n_days = st.sidebar.number_input(f"Last N days ({min_n_days}-{max_n_days})",\
 		min_value=min_n_days, max_value=max_n_days, value=60)
-	fig = get_line_chart_single(rate_positivity[(max_n_days-last_n_days_selected):],\
-		f"Positivity rate for {selected_state} in last {last_n_days_selected} days", "positivity_rate", "r")
+	fig = get_line_chart_single(rate_positivity[(max_n_days-selected_n_days):],\
+		f"Positivity rate for {selected_state} in last {selected_n_days} days", "positivity_rate", "r")
 	fig.show()
 	st.pyplot()
 
@@ -240,7 +240,7 @@ def vaccine_doses_daily():
 	vaccine_doses_cumulative_array = df_vaccine_doses[selected_state].values
 	vaccine_doses_daily_array = np.hstack((vaccine_doses_cumulative_array[0], np.diff(vaccine_doses_cumulative_array)))
 
-	fig = get_bar_chart_single(vaccine_doses_daily_array, "Vaccine doses administered", "vaccine_doses_administered", "g")
+	fig = get_bar_chart_single(vaccine_doses_daily_array, f"Vaccine doses administered in {selected_state}", "vaccine_doses_administered", "g")
 	fig.show()
 	st.pyplot()
 
@@ -253,13 +253,13 @@ def vaccine_doses_total():
 	st.title(f"Statewise distribution of total vaccine doses administered")
 	show_percent = st.sidebar.checkbox("Show percentage", True)
 
-	all_states = df_vaccine_doses.columns[1:].values
+	states_list = df_vaccine_doses.columns[1:].values
 	vaccine_doses_all_states_array = df_vaccine_doses.iloc[-1].values[1:].astype(np.int32)
 
 	link_vaccine_doses_total = "[Download statewise total administered vaccine doses csv data]("+csv_weblinks["vaccine_doses_daily"]+")"
 	st.markdown(link_vaccine_doses_total, unsafe_allow_html=True)
 
-	fig = get_pie_chart_multi_categories(vaccine_doses_all_states_array[:-1], all_states[:-1], \
+	fig = get_pie_chart_multi_categories(vaccine_doses_all_states_array[:-1], states_list[:-1], \
 		"Distribution of total vaccine doses administered by states", show_percent)
 	fig.show()
 	st.pyplot()
