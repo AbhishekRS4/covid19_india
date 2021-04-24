@@ -89,7 +89,7 @@ def infection_latest_date():
 	df_infection_state_daily = get_dataframe_read_csv(csv_weblinks["statewise_daily"])
 
 	df_latest_data = df_infection_state_daily.tail(3)
-	latest_date = df_latest_data.to_numpy()[-1, 0]
+	latest_date = df_latest_data.to_numpy()[-1, 1]
 
 	st.write(f"Latest data available from date : {latest_date}")
 	st.write(df_latest_data)
