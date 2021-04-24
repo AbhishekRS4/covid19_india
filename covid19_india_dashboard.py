@@ -6,6 +6,16 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 
 
+def get_line_chart_single(data, title, label, color, marker="o"):
+	fig, axes = plt.subplots(1, 1, figsize=(8, 8))
+	axes.set_title(title)
+	axes.plot(data, label=label, color=color, marker=marker, linestyle="dashed")
+	axes.legend()
+	axes.grid()
+
+	return fig
+
+
 def get_bar_chart_single(data, title, label, color):
 	fig, axes = plt.subplots(1, 1, figsize=(8, 8))
 	axes.set_title(title)
@@ -68,8 +78,8 @@ def get_pie_chart_multi_categories(sizes, labels, plot_title, show_percent=False
 	return fig
 
 
-def get_dataframe_read_csv(csv_file):
-	df_csv = pd.read_csv(csv_file)
+def get_dataframe_read_csv(csv_file, usecols=None):
+	df_csv = pd.read_csv(csv_file, usecols=usecols)
 
 	return df_csv
 
@@ -174,6 +184,41 @@ def infection_last_n_days():
 		st.pyplot()
 
 
+def infection_rate():
+	df_positivity = get_dataframe_read_csv(csv_weblinks["infection_statewise_daily"],\
+		usecols=["Date", "State", "Confirmed", "Deceased", "Tested"])
+	df_positivity = df_positivity.dropna()
+
+	all_states = np.unique(df_positivity["State"].values)
+	selected_state = st.sidebar.selectbox("State / region", all_states, 13)
+	st.title("Infection rate")
+	st.header(f"Selected state / region : {selected_state}")
+
+	df_positivity_state = df_positivity[df_positivity["State"] == selected_state]
+	positive_cases_cum = df_positivity_state.Confirmed.values
+	deceased_cases_cum = df_positivity_state.Deceased.values
+	total_tested_cum = df_positivity_state.Tested.values
+
+	positive_cases_daily = np.hstack((positive_cases_cum[0], np.diff(positive_cases_cum)))
+	deceased_cases_daily = np.hstack((deceased_cases_cum[0], np.diff(deceased_cases_cum)))
+	total_tested_daily = np.hstack((total_tested_cum[0], np.diff(total_tested_cum)))
+
+	rate_mortality = np.around(100 * np.divide(deceased_cases_cum, positive_cases_cum), 2)
+	st.write(f"Total mortality rate : {rate_mortality[-1]} %")
+
+	rate_positivity = np.around(100 * np.divide(positive_cases_daily, total_tested_daily), 2)
+	rate_positivity = rate_positivity[np.isfinite(rate_positivity)]
+
+	min_n_days = 7
+	max_n_days = len(rate_positivity)
+	last_n_days_selected = st.sidebar.number_input(f"Last N days ({min_n_days}-{max_n_days})",\
+		min_value=min_n_days, max_value=max_n_days, value=60)
+	fig = get_line_chart_single(rate_positivity[(max_n_days-last_n_days_selected):],\
+		f"Positivity rate for {selected_state} in last {last_n_days_selected} days", "positivity_rate", "r")
+	fig.show()
+	st.pyplot()
+
+
 def preprocess_vaccine_doses_df(df_vaccine_doses):
 	df_vaccine_doses = df_vaccine_doses.set_index("State").T
 	df_vaccine_doses = df_vaccine_doses.reset_index()
@@ -224,6 +269,7 @@ modes = {
 	"infection_total" : infection_total,
 	"infection_latest_date" : infection_latest_date,
 	"infection_last_n_days" : infection_last_n_days,
+	"infection_rate" : infection_rate,
 	"vaccine_doses_daily" : vaccine_doses_daily,
 	"vaccine_doses_total" : vaccine_doses_total,
 }
@@ -233,6 +279,7 @@ csv_weblinks = {
 	"statewise_daily" : "https://api.covid19india.org/csv/latest/state_wise_daily.csv",
 	"statewise_total" : "https://api.covid19india.org/csv/latest/state_wise.csv",
 	"vaccine_doses_daily" : "http://api.covid19india.org/csv/latest/vaccine_doses_statewise.csv",
+	"infection_statewise_daily" : "https://api.covid19india.org/csv/latest/states.csv",
 }
 
 
