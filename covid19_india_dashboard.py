@@ -149,7 +149,7 @@ def infection_last_n_days():
 	selected_state_code = states_mapping_dict[selected_state]
 
 	df_last_n_days = df_infection_state_daily.tail(3 * selected_n_days)
-	start_date, end_date = df_last_n_days.Date.to_numpy()[0], df_last_n_days.Date.to_numpy()[-1]
+	start_date, end_date = df_last_n_days.Date_YMD.to_numpy()[0], df_last_n_days.Date_YMD.to_numpy()[-1]
 
 	st.title(f"Last {selected_n_days} days for {selected_state} ({selected_state_code}) from {start_date} to {end_date}")
 
