@@ -85,7 +85,7 @@ def get_dataframe_read_csv(csv_file, usecols=None):
 
 
 def infection_latest_date():
-	st.title("Covid-19 latest cases dashboard")
+	st.title("Covid-19: latest cases dashboard")
 	df_infection_state_daily = get_dataframe_read_csv(csv_weblinks["statewise_daily"])
 
 	df_latest_data = df_infection_state_daily.tail(3)
@@ -109,7 +109,7 @@ def infection_latest_date():
 
 
 def infection_total():
-	st.title("Covid-19 total cases dashboard")
+	st.title("Covid-19: total cases dashboard")
 	df_infection_state_total = get_dataframe_read_csv(csv_weblinks["statewise_total"])
 
 	df_infection_state_total = df_infection_state_total[["State", "State_code", "Confirmed", "Recovered", "Deaths", "Active"]]
@@ -151,7 +151,7 @@ def infection_last_n_days():
 	df_last_n_days = df_infection_state_daily.tail(3 * selected_n_days)
 	start_date, end_date = df_last_n_days.Date_YMD.to_numpy()[0], df_last_n_days.Date_YMD.to_numpy()[-1]
 
-	st.title(f"Last {selected_n_days} days for {selected_state} ({selected_state_code}) from {start_date} to {end_date}")
+	st.title(f"Covid-19: Last {selected_n_days} days for {selected_state} ({selected_state_code}) from {start_date} to {end_date}")
 
 	confirmed_cases = df_last_n_days[selected_state_code].to_numpy()[0::3]
 	recovered_cases = df_last_n_days[selected_state_code].to_numpy()[1::3]
@@ -191,7 +191,7 @@ def infection_rate():
 
 	states_list = np.unique(df_positivity["State"].values)
 	selected_state = st.sidebar.selectbox("State / region", states_list, 13)
-	st.title("Infection rate")
+	st.title("Covid-19: Infection rate")
 	st.header(f"Selected state / region : {selected_state}")
 
 	df_positivity_state = df_positivity[df_positivity["State"] == selected_state]
@@ -231,7 +231,7 @@ def vaccine_doses_daily():
 	df_vaccine_doses = get_dataframe_read_csv(csv_weblinks["vaccine_doses_daily"])
 	df_vaccine_doses = preprocess_vaccine_doses_df(df_vaccine_doses)
 	dates_list = df_vaccine_doses["Date"].values
-	st.title(f"Vaccine doses administered daily from {dates_list[0]} to {dates_list[-1]}")
+	st.title(f"Covid-19: Vaccine doses administered daily from {dates_list[0]} to {dates_list[-1]}")
 
 	states_list = list(df_vaccine_doses.columns[1:])
 	selected_state = st.sidebar.selectbox("State / Region", states_list, len(states_list) - 1)
@@ -250,7 +250,7 @@ def vaccine_doses_total():
 	df_vaccine_doses = preprocess_vaccine_doses_df(df_vaccine_doses)
 	dates_list = df_vaccine_doses["Date"].values
 
-	st.title(f"Statewise distribution of total vaccine doses administered")
+	st.title(f"Covid-19: Statewise distribution of total vaccine doses administered")
 	show_percent = st.sidebar.checkbox("Show percentage", True)
 
 	states_list = df_vaccine_doses.columns[1:].values
