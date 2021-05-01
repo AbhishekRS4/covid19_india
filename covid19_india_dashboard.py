@@ -236,8 +236,9 @@ def vaccine_doses_daily():
 	states_list = list(df_vaccine_doses.columns[1:])
 	selected_state = st.sidebar.selectbox("State / Region", states_list, len(states_list) - 1)
 
-	st.header(f"Selected state / region : {selected_state}")
-	vaccine_doses_cumulative_array = df_vaccine_doses[selected_state].values
+	vaccine_doses_cumulative_array = df_vaccine_doses[selected_state].values.astype(np.int32)
+	st.header(f"Total vaccine doses administered in {selected_state} : {vaccine_doses_cumulative_array[-1]} \
+		({vaccine_doses_cumulative_array[-1]/10**6} Million)")
 	vaccine_doses_daily_array = np.hstack((vaccine_doses_cumulative_array[0], np.diff(vaccine_doses_cumulative_array)))
 
 	fig = get_bar_chart_single(vaccine_doses_daily_array, f"Vaccine doses administered in {selected_state}", "vaccine_doses_administered", "g")
@@ -253,13 +254,15 @@ def vaccine_doses_total():
 	st.title(f"Covid-19: Statewise distribution of total vaccine doses administered")
 	show_percent = st.sidebar.checkbox("Show percentage", True)
 
-	states_list = df_vaccine_doses.columns[1:].values
-	vaccine_doses_all_states_array = df_vaccine_doses.iloc[-1].values[1:].astype(np.int32)
+	states_list = df_vaccine_doses.columns[1:-1].values
+	vaccine_doses_all_states_array = df_vaccine_doses.iloc[-1].values[1:-1].astype(np.int32)
+	total_vaccine_doses = np.sum(vaccine_doses_all_states_array)
+	st.header(f"Total vaccine doses administered in India : {total_vaccine_doses} ({total_vaccine_doses/10**6} Million)")
 
 	link_vaccine_doses_total = "[Download statewise total administered vaccine doses csv data]("+csv_weblinks["vaccine_doses_daily"]+")"
 	st.markdown(link_vaccine_doses_total, unsafe_allow_html=True)
 
-	fig = get_pie_chart_multi_categories(vaccine_doses_all_states_array[:-1], states_list[:-1], \
+	fig = get_pie_chart_multi_categories(vaccine_doses_all_states_array, states_list, \
 		"Distribution of total vaccine doses administered by states", show_percent)
 	fig.show()
 	st.pyplot()
