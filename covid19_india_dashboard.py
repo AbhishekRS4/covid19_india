@@ -186,8 +186,6 @@ def infection_rate():
 
 	states_list = np.unique(df_positivity["State"].values)
 	selected_state = st.sidebar.selectbox("State / region", states_list, 13)
-	st.title("Covid-19: Infection rate")
-	st.header(f"Selected state / region : {selected_state}")
 
 	df_positivity_state = df_positivity[df_positivity["State"] == selected_state]
 	positive_cases_cum = df_positivity_state.Confirmed.values
@@ -199,17 +197,19 @@ def infection_rate():
 	total_tested_daily = np.hstack((total_tested_cum[0], np.diff(total_tested_cum)))
 
 	rate_mortality = np.around(100 * np.divide(deceased_cases_cum, positive_cases_cum), 2)
-	st.write(f"Total mortality rate : {rate_mortality[-1]} %")
-
 	rate_positivity = np.around(100 * np.divide(positive_cases_daily, total_tested_daily), 2)
 	rate_positivity = rate_positivity[np.isfinite(rate_positivity)]
 
 	min_n_days = 7
 	max_n_days = len(rate_positivity)
+	all_dates = np.unique(df_positivity.Date.values)
 	selected_n_days = st.sidebar.number_input(f"Last N days ({min_n_days}-{max_n_days})",\
 		min_value=min_n_days, max_value=max_n_days, value=60)
+	st.title(f"Covid-19: Infection rates from {all_dates[-selected_n_days]} to {all_dates[-1]}")
+	st.header(f"Selected state / region : {selected_state}")
+	st.write(f"Total mortality rate : {rate_mortality[-1]} %")
 	fig = get_line_chart_single(rate_positivity[(max_n_days-selected_n_days):],\
-		f"Positivity rate for {selected_state} in last {selected_n_days} days", "positivity_rate", "r")
+		f"Positivity rates for {selected_state} in last {selected_n_days} days", "positivity_rates", "r")
 	st.pyplot(fig)
 
 
