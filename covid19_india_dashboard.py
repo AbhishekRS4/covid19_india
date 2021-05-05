@@ -104,8 +104,7 @@ def infection_latest_date():
 		latest_data = df_latest_data.to_numpy()[:, start_column:]
 
 		fig = get_bar_chart_multi(latest_data, states_list, latest_date)
-		fig.show()
-		st.pyplot()
+		st.pyplot(fig)
 
 
 def infection_total():
@@ -125,8 +124,7 @@ def infection_total():
 		all_data = df_infection_state_total.to_numpy()[1:, 2:5].T
 
 		fig = get_bar_chart_multi(all_data, states_list)
-		fig.show()
-		st.pyplot()
+		st.pyplot(fig)
 
 
 def infection_last_n_days():
@@ -169,19 +167,16 @@ def infection_last_n_days():
 		st.write(f"Change in deceased cases in last {selected_n_days} days : {percentage_change_deceased_cases:.02f} %")
 
 	if show_plot_confirmed_cases:
-		fig = get_bar_chart_single(confirmed_cases, f"Confirmed cases in {selected_state} for last {selected_n_days} days", "confirmed", "b")
-		fig.show()
-		st.pyplot()
+		fig_c = get_bar_chart_single(confirmed_cases, f"Confirmed cases in {selected_state} for last {selected_n_days} days", "confirmed", "b")
+		st.pyplot(fig_c)
 
 	if show_plot_recovered_cases:
-		fig = get_bar_chart_single(recovered_cases, f"Recovered cases in {selected_state} for last {selected_n_days} days", "recovered", "g")
-		fig.show()
-		st.pyplot()
+		fig_r = get_bar_chart_single(recovered_cases, f"Recovered cases in {selected_state} for last {selected_n_days} days", "recovered", "g")
+		st.pyplot(fig_r)
 
 	if show_plot_deceased_cases:
-		fig = get_bar_chart_single(deceased_cases, f"Deceased cases in {selected_state} for last {selected_n_days} days", "deceased", "r")
-		fig.show()
-		st.pyplot()
+		fig_d = get_bar_chart_single(deceased_cases, f"Deceased cases in {selected_state} for last {selected_n_days} days", "deceased", "r")
+		st.pyplot(fig_d)
 
 
 def infection_rate():
@@ -215,8 +210,7 @@ def infection_rate():
 		min_value=min_n_days, max_value=max_n_days, value=60)
 	fig = get_line_chart_single(rate_positivity[(max_n_days-selected_n_days):],\
 		f"Positivity rate for {selected_state} in last {selected_n_days} days", "positivity_rate", "r")
-	fig.show()
-	st.pyplot()
+	st.pyplot(fig)
 
 
 def preprocess_vaccine_doses_df(df_vaccine_doses):
@@ -242,8 +236,7 @@ def vaccine_doses_daily():
 	vaccine_doses_daily_array = np.hstack((vaccine_doses_cumulative_array[0], np.diff(vaccine_doses_cumulative_array)))
 
 	fig = get_bar_chart_single(vaccine_doses_daily_array, f"Vaccine doses administered in {selected_state}", "vaccine_doses_administered", "g")
-	fig.show()
-	st.pyplot()
+	st.pyplot(fig)
 
 
 def vaccine_doses_total():
@@ -264,8 +257,7 @@ def vaccine_doses_total():
 
 	fig = get_pie_chart_multi_categories(vaccine_doses_all_states_array, states_list, \
 		"Distribution of total vaccine doses administered by states", show_percent)
-	fig.show()
-	st.pyplot()
+	st.pyplot(fig)
 
 
 modes = {
