@@ -105,7 +105,8 @@ def infection_latest_date():
 
         fig = get_bar_chart_multi(latest_data, states_list, latest_date)
         st.pyplot(fig)
-    st.markdown("_-Abhishek R S_")
+    st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
+
 
 def infection_total():
     st.title("Covid-19: total cases dashboard")
@@ -125,7 +126,7 @@ def infection_total():
 
         fig = get_bar_chart_multi(all_data, states_list)
         st.pyplot(fig)
-    st.markdown("_-Abhishek R S_")
+    st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
 
 
 def infection_last_n_days():
@@ -178,7 +179,7 @@ def infection_last_n_days():
     if show_plot_deceased_cases:
         fig_d = get_bar_chart_single(deceased_cases, f"Deceased cases in {selected_state} for last {selected_n_days} days", "deceased", "r")
         st.pyplot(fig_d)
-    st.markdown("_-Abhishek R S_")
+    st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
 
 
 def infection_rate():
@@ -213,7 +214,7 @@ def infection_rate():
     fig = get_line_chart_single(rate_positivity[(max_n_days-selected_n_days):],\
         f"Positivity rates for {selected_state} in last {selected_n_days} days", "positivity_rates", "r")
     st.pyplot(fig)
-    st.markdown("_-Abhishek R S_")
+    st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
 
 
 def preprocess_vaccine_doses_df(df_vaccine_doses):
@@ -240,7 +241,7 @@ def vaccine_doses_daily():
 
     fig = get_bar_chart_single(vaccine_doses_daily_array, f"Vaccine doses administered in {selected_state}", "vaccine_doses_administered", "g")
     st.pyplot(fig)
-    st.markdown("_-Abhishek R S_")
+    st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
 
 
 def vaccine_doses_total():
@@ -262,7 +263,7 @@ def vaccine_doses_total():
     fig = get_pie_chart_multi_categories(vaccine_doses_all_states_array, states_list, \
         "Distribution of total vaccine doses administered by states", show_percent)
     st.pyplot(fig)
-    st.markdown("_-Abhishek R S_")
+    st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
 
 
 modes = {
