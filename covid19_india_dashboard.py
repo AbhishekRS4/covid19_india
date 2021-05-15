@@ -157,16 +157,9 @@ def infection_last_n_days():
     recovered_cases = df_last_n_days[selected_state_code].to_numpy()[1::3]
     deceased_cases = df_last_n_days[selected_state_code].to_numpy()[2::3]
 
-    show_percentage_change = st.sidebar.checkbox("Show percentage change", True)
     show_plot_confirmed_cases = st.sidebar.checkbox("Show plot confirmed cases", True)
     show_plot_recovered_cases = st.sidebar.checkbox("Show plot recovered cases", True)
     show_plot_deceased_cases = st.sidebar.checkbox("Show plot deceased cases", True)
-
-    if show_percentage_change:
-        percentage_change_confirmed_cases = 100 * (confirmed_cases[-1] - confirmed_cases[0]) / confirmed_cases[0]
-        percentage_change_deceased_cases = 100 * (deceased_cases[-1] - deceased_cases[0]) / deceased_cases[0]
-        st.write(f"Change in confirmed cases in last {selected_n_days} days : {percentage_change_confirmed_cases:.02f} %")
-        st.write(f"Change in deceased cases in last {selected_n_days} days : {percentage_change_deceased_cases:.02f} %")
 
     if show_plot_confirmed_cases:
         fig_c = get_bar_chart_single(confirmed_cases, f"Confirmed cases in {selected_state} for last {selected_n_days} days", "confirmed", "b")
@@ -325,13 +318,13 @@ def vaccine_doses_total():
 
 
 modes = {
-    "infection_total" : infection_total,
-    "infection_latest_date" : infection_latest_date,
-    "infection_last_n_days" : infection_last_n_days,
-    "infection_last_n_days_districtwise" : infection_last_n_days_districtwise,
-    "infection_rate" : infection_rate,
-    "vaccine_doses_daily" : vaccine_doses_daily,
-    "vaccine_doses_total" : vaccine_doses_total,
+    "Total statewise" : infection_total,
+    "Latest date statewise" : infection_latest_date,
+    "Last N days statewise" : infection_last_n_days,
+    "Last N days districtwise" : infection_last_n_days_districtwise,
+    "Infection rates statewise" : infection_rate,
+    "Vaccine doses daily" : vaccine_doses_daily,
+    "Vaccine doses total" : vaccine_doses_total,
 }
 
 
