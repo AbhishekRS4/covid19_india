@@ -133,8 +133,8 @@ def infection_last_n_days():
     df_infection_state_total = get_dataframe_read_csv(csv_weblinks["statewise_total"])
     df_infection_state_daily = get_dataframe_read_csv(csv_weblinks["statewise_daily"])
 
-    states_list = list(df_infection_state_total.State.to_numpy())
-    states_code = list(df_infection_state_total.State_code.to_numpy())
+    states_list = df_infection_state_total.State.to_numpy()
+    states_code = df_infection_state_total.State_code.to_numpy()
 
     states_mapping_dict = dict()
 
@@ -143,7 +143,7 @@ def infection_last_n_days():
 
     min_n_days = 7
     max_n_days = df_infection_state_daily.shape[0] // 3
-    selected_state = st.sidebar.selectbox("State / region", list(states_list))
+    selected_state = st.sidebar.selectbox("State / region", states_list)
     selected_n_days = st.sidebar.number_input(f"Last N days ({min_n_days}-{max_n_days})", \
         min_value=min_n_days, max_value=max_n_days, value=60)
     selected_state_code = states_mapping_dict[selected_state]
@@ -282,7 +282,7 @@ def vaccine_doses_daily():
     dates_list = df_vaccine_doses.Date.to_numpy()
     st.title(f"Covid-19: vaccine doses administered daily from {dates_list[0]} to {dates_list[-1]}")
 
-    states_list = list(df_vaccine_doses.columns[1:])
+    states_list = df_vaccine_doses.columns[1:].to_numpy()
     selected_state = st.sidebar.selectbox("State / Region", states_list, len(states_list) - 1)
 
     vaccine_doses_cumulative_array = df_vaccine_doses[selected_state].to_numpy().astype(np.int32)
