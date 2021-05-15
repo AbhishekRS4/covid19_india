@@ -143,9 +143,9 @@ def infection_last_n_days():
 
     min_n_days = 7
     max_n_days = df_infection_state_daily.shape[0] // 3
+    selected_state = st.sidebar.selectbox("State / region", list(states_list))
     selected_n_days = st.sidebar.number_input(f"Last N days ({min_n_days}-{max_n_days})", \
         min_value=min_n_days, max_value=max_n_days, value=60)
-    selected_state = st.sidebar.selectbox("State / Region", list(states_list))
     selected_state_code = states_mapping_dict[selected_state]
 
     df_last_n_days = df_infection_state_daily.tail(3 * selected_n_days)
@@ -211,9 +211,13 @@ def infection_rate():
     st.title(f"Covid-19: Infection rates from {all_dates[-selected_n_days]} to {all_dates[-1]}")
     st.header(f"Selected state / region : {selected_state}")
     st.write(f"Total mortality rate : {rate_mortality[-1]} %")
-    fig = get_line_chart_single(rate_positivity[(max_n_days-selected_n_days):],\
-        f"Positivity rates for {selected_state} in last {selected_n_days} days", "positivity_rates", "r")
-    st.pyplot(fig)
+    fig_1 = get_line_chart_single(rate_positivity[(max_n_days-selected_n_days):],\
+        f"Positivity rates in {selected_state} in last {selected_n_days} days", "positivity_rates", "r")
+    st.pyplot(fig_1)
+
+    fig_2 = get_line_chart_single(total_tested_daily[(max_n_days-selected_n_days):],\
+        f"Total tests in {selected_state} in last {selected_n_days} days", "tests_daily", "b")
+    st.pyplot(fig_2)
     st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
 
 
