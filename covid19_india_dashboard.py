@@ -182,6 +182,61 @@ def infection_last_n_days():
     st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
 
 
+def infection_last_n_days_districtwise():
+    df_infection_district_daily = get_dataframe_read_csv(csv_weblinks["infection_districtwise_daily"],
+        usecols=["Date", "State", "District", "Confirmed", "Recovered", "Deceased"])
+
+    states_list = np.unique(df_infection_district_daily.State.to_numpy())
+    selected_state = st.sidebar.selectbox("State / region", states_list)
+    df_state_daily = df_infection_district_daily[df_infection_district_daily["State"] == selected_state]
+
+    districts_list = np.unique(df_state_daily.District.to_numpy())
+    selected_district = st.sidebar.selectbox("District", districts_list)
+    df_district_daily = df_state_daily[df_state_daily["District"] == selected_district]
+
+    confirmed_cases_cum = df_district_daily.Confirmed.to_numpy()
+    recovered_cases_cum = df_district_daily.Recovered.to_numpy()
+    deceased_cases_cum = df_district_daily.Deceased.to_numpy()
+
+    confirmed_cases_daily = np.hstack((confirmed_cases_cum[0], np.diff(confirmed_cases_cum)))
+    recovered_cases_daily = np.hstack((recovered_cases_cum[0], np.diff(recovered_cases_cum)))
+    deceased_cases_daily = np.hstack((deceased_cases_cum[0], np.diff(deceased_cases_cum)))
+
+    min_n_days = 7
+    max_n_days = confirmed_cases_daily.shape[0]
+    all_dates = df_district_daily.Date.to_numpy()
+
+    selected_n_days = st.sidebar.number_input(f"Last N days ({min_n_days}-{max_n_days})", \
+        min_value=min_n_days, max_value=max_n_days, value=60)
+
+    st.title(f"Covid-19: Data for last {selected_n_days} days for {selected_district}, {selected_state} \
+        from {all_dates[-selected_n_days]} to {all_dates[-1]}")
+
+    show_plot_confirmed_cases = st.sidebar.checkbox("Show plot confirmed cases", True)
+    show_plot_recovered_cases = st.sidebar.checkbox("Show plot recovered cases", True)
+    show_plot_deceased_cases = st.sidebar.checkbox("Show plot deceased cases", True)
+
+    if show_plot_confirmed_cases:
+        fig_c = get_bar_chart_single(confirmed_cases_daily[(max_n_days-selected_n_days):], \
+            f"Confirmed cases in {selected_district}, {selected_state} for last {selected_n_days} days", \
+            "confirmed", "b")
+        st.pyplot(fig_c)
+
+    if show_plot_recovered_cases:
+        fig_r = get_bar_chart_single(recovered_cases_daily[(max_n_days-selected_n_days):], \
+            f"Recovered cases in {selected_district}, {selected_state} for last {selected_n_days} days", \
+            "recovered", "g")
+        st.pyplot(fig_r)
+
+    if show_plot_deceased_cases:
+        fig_d = get_bar_chart_single(deceased_cases_daily[(max_n_days-selected_n_days):], \
+            f"Deceased cases in {selected_district}, {selected_state} for last {selected_n_days} days", \
+            "deceased", "r")
+        st.pyplot(fig_d)
+
+    st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
+
+
 def infection_rate():
     df_positivity = get_dataframe_read_csv(csv_weblinks["infection_statewise_daily"],\
         usecols=["Date", "State", "Confirmed", "Deceased", "Tested"])
@@ -205,7 +260,7 @@ def infection_rate():
 
     min_n_days = 7
     max_n_days = len(rate_positivity)
-    all_dates = np.unique(df_positivity.Date.to_numpy())
+    all_dates = df_positivity_state.Date.to_numpy()
     selected_n_days = st.sidebar.number_input(f"Last N days ({min_n_days}-{max_n_days})",\
         min_value=min_n_days, max_value=max_n_days, value=60)
     st.title(f"Covid-19: Infection rates from {all_dates[-selected_n_days]} to {all_dates[-1]}")
@@ -274,6 +329,7 @@ modes = {
     "infection_total" : infection_total,
     "infection_latest_date" : infection_latest_date,
     "infection_last_n_days" : infection_last_n_days,
+    "infection_last_n_days_districtwise" : infection_last_n_days_districtwise,
     "infection_rate" : infection_rate,
     "vaccine_doses_daily" : vaccine_doses_daily,
     "vaccine_doses_total" : vaccine_doses_total,
@@ -285,6 +341,7 @@ csv_weblinks = {
     "statewise_total" : "https://api.covid19india.org/csv/latest/state_wise.csv",
     "vaccine_doses_daily" : "http://api.covid19india.org/csv/latest/vaccine_doses_statewise.csv",
     "infection_statewise_daily" : "https://api.covid19india.org/csv/latest/states.csv",
+    "infection_districtwise_daily" : "https://api.covid19india.org/csv/latest/districts.csv",
 }
 
 
