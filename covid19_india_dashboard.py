@@ -151,7 +151,7 @@ def infection_last_n_days():
     df_last_n_days = df_infection_state_daily.tail(3 * selected_n_days)
     start_date, end_date = df_last_n_days.Date_YMD.to_numpy()[0], df_last_n_days.Date_YMD.to_numpy()[-1]
 
-    st.title(f"Covid-19: Last {selected_n_days} days for {selected_state} ({selected_state_code}) from {start_date} to {end_date}")
+    st.title(f"Covid-19: data for last {selected_n_days} days for {selected_state} ({selected_state_code}) from {start_date} to {end_date}")
 
     confirmed_cases = df_last_n_days[selected_state_code].to_numpy()[0::3]
     recovered_cases = df_last_n_days[selected_state_code].to_numpy()[1::3]
@@ -209,7 +209,7 @@ def infection_last_n_days_districtwise():
     selected_n_days = st.sidebar.number_input(f"Last N days ({min_n_days}-{max_n_days})", \
         min_value=min_n_days, max_value=max_n_days, value=60)
 
-    st.title(f"Covid-19: Data for last {selected_n_days} days for {selected_district}, {selected_state} \
+    st.title(f"Covid-19: data for last {selected_n_days} days for {selected_district}, {selected_state} \
         from {all_dates[-selected_n_days]} to {all_dates[-1]}")
 
     show_plot_confirmed_cases = st.sidebar.checkbox("Show plot confirmed cases", True)
@@ -263,9 +263,8 @@ def infection_rate():
     all_dates = df_positivity_state.Date.to_numpy()
     selected_n_days = st.sidebar.number_input(f"Last N days ({min_n_days}-{max_n_days})",\
         min_value=min_n_days, max_value=max_n_days, value=60)
-    st.title(f"Covid-19: Infection rates from {all_dates[-selected_n_days]} to {all_dates[-1]}")
-    st.header(f"Selected state / region : {selected_state}")
-    st.write(f"Total mortality rate : {rate_mortality[-1]} %")
+    st.title(f"Covid-19: infection rates for {selected_state} from {all_dates[-selected_n_days]} to {all_dates[-1]}")
+    st.write(f"Mortality rate in {selected_state} : {rate_mortality[-1]} %")
     fig_1 = get_line_chart_single(rate_positivity[(max_n_days-selected_n_days):],\
         f"Positivity rates in {selected_state} in last {selected_n_days} days", "positivity_rates", "r")
     st.pyplot(fig_1)
@@ -288,13 +287,13 @@ def vaccine_doses_daily():
     df_vaccine_doses = get_dataframe_read_csv(csv_weblinks["vaccine_doses_daily"])
     df_vaccine_doses = preprocess_vaccine_doses_df(df_vaccine_doses)
     dates_list = df_vaccine_doses.Date.to_numpy()
-    st.title(f"Covid-19: Vaccine doses administered daily from {dates_list[0]} to {dates_list[-1]}")
+    st.title(f"Covid-19: vaccine doses administered daily from {dates_list[0]} to {dates_list[-1]}")
 
     states_list = list(df_vaccine_doses.columns[1:])
     selected_state = st.sidebar.selectbox("State / Region", states_list, len(states_list) - 1)
 
     vaccine_doses_cumulative_array = df_vaccine_doses[selected_state].to_numpy().astype(np.int32)
-    st.header(f"Total vaccine doses administered in {selected_state} : {vaccine_doses_cumulative_array[-1]} \
+    st.header(f"Overall vaccine doses administered in {selected_state} : {vaccine_doses_cumulative_array[-1]} \
         ({vaccine_doses_cumulative_array[-1]/10**6} Million)")
     vaccine_doses_daily_array = np.hstack((vaccine_doses_cumulative_array[0], np.diff(vaccine_doses_cumulative_array)))
 
@@ -308,7 +307,7 @@ def vaccine_doses_total():
     df_vaccine_doses = preprocess_vaccine_doses_df(df_vaccine_doses)
     dates_list = df_vaccine_doses.Date.to_numpy()
 
-    st.title(f"Covid-19: Statewise distribution of total vaccine doses administered")
+    st.title(f"Covid-19: statewise distribution of total vaccine doses administered")
     show_percent = st.sidebar.checkbox("Show percentage", True)
 
     states_list = df_vaccine_doses.columns[1:-1].to_numpy()
