@@ -187,13 +187,13 @@ def infection_rate():
         usecols=["Date", "State", "Confirmed", "Deceased", "Tested"])
     df_positivity = df_positivity.dropna()
 
-    states_list = np.unique(df_positivity["State"].values)
+    states_list = np.unique(df_positivity.State.to_numpy())
     selected_state = st.sidebar.selectbox("State / region", states_list, 13)
 
     df_positivity_state = df_positivity[df_positivity["State"] == selected_state]
-    positive_cases_cum = df_positivity_state.Confirmed.values
-    deceased_cases_cum = df_positivity_state.Deceased.values
-    total_tested_cum = df_positivity_state.Tested.values
+    positive_cases_cum = df_positivity_state.Confirmed.to_numpy()
+    deceased_cases_cum = df_positivity_state.Deceased.to_numpy()
+    total_tested_cum = df_positivity_state.Tested.to_numpy()
 
     positive_cases_daily = np.hstack((positive_cases_cum[0], np.diff(positive_cases_cum)))
     deceased_cases_daily = np.hstack((deceased_cases_cum[0], np.diff(deceased_cases_cum)))
@@ -205,7 +205,7 @@ def infection_rate():
 
     min_n_days = 7
     max_n_days = len(rate_positivity)
-    all_dates = np.unique(df_positivity.Date.values)
+    all_dates = np.unique(df_positivity.Date.to_numpy())
     selected_n_days = st.sidebar.number_input(f"Last N days ({min_n_days}-{max_n_days})",\
         min_value=min_n_days, max_value=max_n_days, value=60)
     st.title(f"Covid-19: Infection rates from {all_dates[-selected_n_days]} to {all_dates[-1]}")
@@ -228,13 +228,13 @@ def preprocess_vaccine_doses_df(df_vaccine_doses):
 def vaccine_doses_daily():
     df_vaccine_doses = get_dataframe_read_csv(csv_weblinks["vaccine_doses_daily"])
     df_vaccine_doses = preprocess_vaccine_doses_df(df_vaccine_doses)
-    dates_list = df_vaccine_doses["Date"].values
+    dates_list = df_vaccine_doses.Date.to_numpy()
     st.title(f"Covid-19: Vaccine doses administered daily from {dates_list[0]} to {dates_list[-1]}")
 
     states_list = list(df_vaccine_doses.columns[1:])
     selected_state = st.sidebar.selectbox("State / Region", states_list, len(states_list) - 1)
 
-    vaccine_doses_cumulative_array = df_vaccine_doses[selected_state].values.astype(np.int32)
+    vaccine_doses_cumulative_array = df_vaccine_doses[selected_state].to_numpy().astype(np.int32)
     st.header(f"Total vaccine doses administered in {selected_state} : {vaccine_doses_cumulative_array[-1]} \
         ({vaccine_doses_cumulative_array[-1]/10**6} Million)")
     vaccine_doses_daily_array = np.hstack((vaccine_doses_cumulative_array[0], np.diff(vaccine_doses_cumulative_array)))
@@ -247,13 +247,13 @@ def vaccine_doses_daily():
 def vaccine_doses_total():
     df_vaccine_doses = get_dataframe_read_csv(csv_weblinks["vaccine_doses_daily"])
     df_vaccine_doses = preprocess_vaccine_doses_df(df_vaccine_doses)
-    dates_list = df_vaccine_doses["Date"].values
+    dates_list = df_vaccine_doses.Date.to_numpy()
 
     st.title(f"Covid-19: Statewise distribution of total vaccine doses administered")
     show_percent = st.sidebar.checkbox("Show percentage", True)
 
-    states_list = df_vaccine_doses.columns[1:-1].values
-    vaccine_doses_all_states_array = df_vaccine_doses.iloc[-1].values[1:-1].astype(np.int32)
+    states_list = df_vaccine_doses.columns[1:-1].to_numpy()
+    vaccine_doses_all_states_array = df_vaccine_doses.iloc[-1].to_numpy()[1:-1].astype(np.int32)
     total_vaccine_doses = np.sum(vaccine_doses_all_states_array)
     st.header(f"Total vaccine doses administered in India : {total_vaccine_doses} ({total_vaccine_doses/10**6} Million)")
 
