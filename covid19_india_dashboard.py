@@ -317,6 +317,13 @@ def vaccine_doses_total():
     st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
 
 
+def developer_info():
+    st.title("Developer info")
+    st.markdown("_Developer - Abhishek R S_")
+    st.markdown("_Github - [github.com/AbhishekRS4](https://github.com/AbhishekRS4)_")
+    st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
+
+
 modes = {
     "Total statewise" : infection_total,
     "Latest date statewise" : infection_latest_date,
@@ -325,6 +332,7 @@ modes = {
     "Infection rates statewise" : infection_rate,
     "Vaccine doses daily" : vaccine_doses_daily,
     "Vaccine doses total" : vaccine_doses_total,
+    "Developer info" : developer_info,
 }
 
 
