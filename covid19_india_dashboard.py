@@ -262,7 +262,7 @@ def infection_rate():
         f"Positivity rates in {selected_state} in last {selected_n_days} days", "positivity_rates", "r")
     st.pyplot(fig_1)
 
-    fig_2 = get_line_chart_single(total_tested_daily[(max_n_days-selected_n_days):],\
+    fig_2 = get_line_chart_single(total_tested_daily[(len(total_tested_daily)-selected_n_days):],\
         f"Total tests in {selected_state} in last {selected_n_days} days", "tests_daily", "b")
     st.pyplot(fig_2)
     st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
