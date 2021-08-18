@@ -319,7 +319,7 @@ def vaccine_doses_total():
 
 def developer_info():
     st.title("Developer info")
-    st.markdown("_Developer - Abhishek R S_")
+    st.markdown("_Developer - Abhishek R. S._")
     st.markdown("_Github - [github.com/AbhishekRS4](https://github.com/AbhishekRS4)_")
     st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
 
