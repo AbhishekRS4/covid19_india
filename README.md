@@ -2,7 +2,7 @@
 
 ## Visualizer for analysis of reported covid-19 data for India
 * The visualizer is for analysis of reported covid-19 data for India
-* The source of data is as compiled by [https://www.covid19india.org/](https://www.covid19india.org/)
+* Thanks to [covid19india.org](https://www.covid19india.org/) for collating the data
 * The csv data can be found in [https://api.covid19india.org/documentation/csv/](https://api.covid19india.org/documentation/csv/)
 
 ## Requirements
