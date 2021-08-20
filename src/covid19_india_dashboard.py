@@ -2,9 +2,8 @@ import os
 import numpy as np
 import pandas as pd
 import streamlit as st
-import matplotlib.pyplot as plt
 from matplotlib import cm
-
+import matplotlib.pyplot as plt
 
 def get_line_chart_single(data, title, label, color, marker="o"):
     fig, axes = plt.subplots(1, 1, figsize=(8, 8))
@@ -12,9 +11,7 @@ def get_line_chart_single(data, title, label, color, marker="o"):
     axes.plot(data, label=label, color=color, marker=marker, linestyle="dashed")
     axes.legend()
     axes.grid()
-
     return fig
-
 
 def get_bar_chart_single(data, title, label, color):
     fig, axes = plt.subplots(1, 1, figsize=(8, 8))
@@ -22,9 +19,7 @@ def get_bar_chart_single(data, title, label, color):
     axes.bar(np.arange(len(data)), data, label=label, color=color)
     axes.legend()
     axes.grid()
-
     return fig
-
 
 def get_bar_chart_multi(data, states, latest_date=None):
     width = 0.3
@@ -48,9 +43,7 @@ def get_bar_chart_multi(data, states, latest_date=None):
     axes[1].bar(states, data[-1, :], label="deceased", color="r")
     axes[1].legend()
     axes[1].grid()
-
     return fig
-
 
 def get_pie_chart_multi_categories(sizes, labels, plot_title, show_percent=False, color_offsets=31, color_offsets_2=101):
     total_values = len(sizes) * 4
@@ -74,15 +67,11 @@ def get_pie_chart_multi_categories(sizes, labels, plot_title, show_percent=False
         patches, labels, dummy = zip(*sorted(zip(patches, labels, sizes), key=lambda labels: labels[2], reverse=True))
 
     plt.legend(patches, labels, loc="best", fontsize=8)
-
     return fig
-
 
 def get_dataframe_read_csv(csv_file, usecols=None):
     df_csv = pd.read_csv(csv_file, usecols=usecols)
-
     return df_csv
-
 
 def infection_latest_date():
     st.title("Covid-19: latest cases dashboard")
@@ -106,7 +95,7 @@ def infection_latest_date():
         fig = get_bar_chart_multi(latest_data, states_list, latest_date)
         st.pyplot(fig)
     st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
-
+    return
 
 def infection_total():
     st.title("Covid-19: total cases dashboard")
@@ -127,7 +116,7 @@ def infection_total():
         fig = get_bar_chart_multi(all_data, states_list)
         st.pyplot(fig)
     st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
-
+    return
 
 def infection_last_n_days():
     df_infection_state_total = get_dataframe_read_csv(csv_weblinks["statewise_total"])
@@ -173,7 +162,7 @@ def infection_last_n_days():
         fig_d = get_bar_chart_single(deceased_cases, f"Deceased cases in {selected_state} for last {selected_n_days} days", "deceased", "r")
         st.pyplot(fig_d)
     st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
-
+    return
 
 def infection_last_n_days_districtwise():
     df_infection_district_daily = get_dataframe_read_csv(csv_weblinks["infection_districtwise_daily"],
@@ -228,7 +217,7 @@ def infection_last_n_days_districtwise():
         st.pyplot(fig_d)
 
     st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
-
+    return
 
 def infection_rate():
     df_positivity = get_dataframe_read_csv(csv_weblinks["infection_statewise_daily"],\
@@ -266,7 +255,7 @@ def infection_rate():
         f"Total tests in {selected_state} in last {selected_n_days} days", "tests_daily", "b")
     st.pyplot(fig_2)
     st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
-
+    return
 
 def preprocess_vaccine_doses_df(df_vaccine_doses):
     df_vaccine_doses = df_vaccine_doses.set_index("State").T
@@ -274,7 +263,6 @@ def preprocess_vaccine_doses_df(df_vaccine_doses):
     df_vaccine_doses = df_vaccine_doses.rename(columns={"index": "Date"})
     df_vaccine_doses = df_vaccine_doses.dropna()
     return df_vaccine_doses
-
 
 def vaccine_doses_daily():
     df_vaccine_doses = get_dataframe_read_csv(csv_weblinks["vaccine_doses_daily"])
@@ -293,7 +281,7 @@ def vaccine_doses_daily():
     fig = get_bar_chart_single(vaccine_doses_daily_array, f"Vaccine doses administered in {selected_state}", "vaccine_doses_administered", "g")
     st.pyplot(fig)
     st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
-
+    return
 
 def vaccine_doses_total():
     df_vaccine_doses = get_dataframe_read_csv(csv_weblinks["vaccine_doses_daily"])
@@ -315,14 +303,14 @@ def vaccine_doses_total():
         "Distribution of total vaccine doses administered by states", show_percent)
     st.pyplot(fig)
     st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
+    return
 
-
-def developer_info():
-    st.title("Developer info")
+def app_info():
+    st.title("App info")
     st.markdown("_Developer - Abhishek R. S._")
     st.markdown("_Github - [github.com/AbhishekRS4](https://github.com/AbhishekRS4)_")
     st.markdown("_Source of data - [covid19india.org](https://www.covid19india.org)_")
-
+    return
 
 modes = {
     "Total statewise" : infection_total,
@@ -332,9 +320,8 @@ modes = {
     "Infection rates statewise" : infection_rate,
     "Vaccine doses daily" : vaccine_doses_daily,
     "Vaccine doses total" : vaccine_doses_total,
-    "Developer info" : developer_info,
+    "App info" : app_info,
 }
-
 
 csv_weblinks = {
     "statewise_daily" : "https://api.covid19india.org/csv/latest/state_wise_daily.csv",
@@ -344,11 +331,9 @@ csv_weblinks = {
     "infection_districtwise_daily" : "https://api.covid19india.org/csv/latest/districts.csv",
 }
 
-
 def main():
     mode = st.sidebar.selectbox("Mode", list(modes.keys()))
     modes[mode]()
-
 
 if __name__ == "__main__":
     main()
